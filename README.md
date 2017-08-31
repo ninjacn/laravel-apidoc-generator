@@ -241,4 +241,4 @@ This package uses [Documentarian](https://github.com/mpociot/documentarian) to g
 
 ### License
 
-The Laravel API Documentation Generator is free software licensed under the MIT license.
+The Laravel API Documentation Generator is free software licensed under the MIT license..
