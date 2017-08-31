@@ -7,7 +7,7 @@
         "Documentation",
         "Laravel"
     ],
-    "homepage": "http://github.com/mpociot/laravel-apidoc-generator",
+    "homepage": "https://github.com/ninjacn/laravel-apidoc-generator",
     "authors": [
         {
             "name": "Marcel Pociot",
