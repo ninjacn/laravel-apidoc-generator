@@ -62,7 +62,7 @@ class DingoGenerator extends AbstractGenerator
         $dispatcher = app('Dingo\Api\Dispatcher')->raw();
 
         collect($server)->map(function ($key, $value) use ($dispatcher) {
-            $dispatcher->header($value, $key);
+            $dispatcher->header($key, $value);
         });
 
         return call_user_func_array([$dispatcher, strtolower($method)], [$uri]);
@@ -71,16 +71,8 @@ class DingoGenerator extends AbstractGenerator
     /**
      * {@inheritdoc}
      */
-    public function getUri($route)
+    protected function getUri($route)
     {
         return $route->uri();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMethods($route)
-    {
-        return $route->getMethods();
     }
 }

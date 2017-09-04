@@ -1,5 +1,5 @@
 {
-    "name": "ninjacn/laravel-apidoc-generator",
+    "name": "mpociot/laravel-apidoc-generator",
     "license": "MIT",
     "description": "Generate beautiful API documentation from your Laravel application",
     "keywords": [
@@ -7,7 +7,7 @@
         "Documentation",
         "Laravel"
     ],
-    "homepage": "https://github.com/ninjacn/laravel-apidoc-generator",
+    "homepage": "http://github.com/mpociot/laravel-apidoc-generator",
     "authors": [
         {
             "name": "Marcel Pociot",
@@ -17,7 +17,7 @@
     "require": {
         "php": ">=5.5.0",
         "fzaninotto/faker": "~1.0",
-        "laravel/framework": "~5.4",
+        "laravel/framework": "~5.0",
         "mpociot/documentarian": "^0.2.0",
         "mpociot/reflection-docblock": "^1.0",
         "ramsey/uuid": "^3.0"

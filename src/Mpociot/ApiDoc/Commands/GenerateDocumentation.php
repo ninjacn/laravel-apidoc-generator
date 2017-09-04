@@ -20,7 +20,7 @@ class GenerateDocumentation extends Command
      *
      * @var string
      */
-    protected $signature = 'api:generate
+    protected $signature = 'api:generate 
                             {--output=public/docs : The output path for the generated documentation}
                             {--routePrefix= : The route prefix to use for generation}
                             {--routes=* : The route names to use for generation}
@@ -28,8 +28,6 @@ class GenerateDocumentation extends Command
                             {--noResponseCalls : Disable API response calls}
                             {--noPostmanCollection : Disable Postman collection creation}
                             {--useMiddlewares : Use all configured route middlewares}
-                            {--authProvider=users : The authentication provider to use for API response calls}
-                            {--authGuard=web : The authentication guard to use for API response calls}
                             {--actAsUserId= : The user ID to use for API response calls}
                             {--router=laravel : The router to be used (Laravel or Dingo)}
                             {--force : Force rewriting of existing routes}
@@ -110,11 +108,7 @@ class GenerateDocumentation extends Command
 
         $parsedRouteOutput = $parsedRoutes->map(function ($routeGroup) {
             return $routeGroup->map(function ($route) {
-                $token = 'ninjacn';
-                $route['output'] = (string) view('apidoc::partials.route')
-                    ->with('parsedRoute', $route)
-                    ->with('token', $token)
-                    ->render();
+                $route['output'] = (string) view('apidoc::partials.route')->with('parsedRoute', $route);
 
                 return $route;
             });
@@ -229,10 +223,9 @@ class GenerateDocumentation extends Command
                 $user = $userModel::find((int) $actAs);
                 $this->laravel['auth']->setUser($user);
             } else {
-                $provider = $this->option('authProvider');
-                $userModel = config("auth.providers.$provider.model");
+                $userModel = config('auth.providers.users.model');
                 $user = $userModel::find((int) $actAs);
-                $this->laravel['auth']->guard($this->option('authGuard'))->setUser($user);
+                $this->laravel['auth']->guard()->setUser($user);
             }
         }
     }
@@ -263,12 +256,12 @@ class GenerateDocumentation extends Command
         $bindings = $this->getBindings();
         $parsedRoutes = [];
         foreach ($routes as $route) {
-            if (in_array($route->getName(), $allowedRoutes) || str_is($routePrefix, $generator->getUri($route)) || in_array($middleware, $route->middleware())) {
+            if (in_array($route->getName(), $allowedRoutes) || str_is($routePrefix, $route->getUri()) || in_array($middleware, $route->middleware())) {
                 if ($this->isValidRoute($route) && $this->isRouteVisibleForDocumentation($route->getAction()['uses'])) {
                     $parsedRoutes[] = $generator->processRoute($route, $bindings, $this->option('header'), $withResponse);
-                    $this->info('Processed route: ['.implode(',', $generator->getMethods($route)).'] '.$generator->getUri($route));
+                    $this->info('Processed route: ['.implode(',', $route->getMethods()).'] '.$route->getUri());
                 } else {
-                    $this->warn('Skipping route: ['.implode(',', $generator->getMethods($route)).'] '.$generator->getUri($route));
+                    $this->warn('Skipping route: ['.implode(',', $route->getMethods()).'] '.$route->getUri());
                 }
             }
         }
