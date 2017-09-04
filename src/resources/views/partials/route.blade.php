@@ -64,7 +64,7 @@ headers = {
     'token': "{{$token}}"
     }
 
-response = requests.request("$parsedRoute['methods'][0]", url, headers=headers)
+response = requests.request("{{$parsedRoute['methods'][0]}}", url, headers=headers)
 
 print(response.text)
 ```
