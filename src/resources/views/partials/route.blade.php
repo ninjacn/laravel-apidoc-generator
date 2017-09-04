@@ -10,13 +10,95 @@
 > Example request:
 
 ```bash
-curl "{{config('app.url')}}/{{$parsedRoute['uri']}}" \
+curl -X {{$parsedRoute['methods'][0]}} "{{config('app.url')}}/{{$parsedRoute['uri']}}" \
+-H 'cache-control: no-cache' \
 -H "Accept: application/json"@if(count($parsedRoute['parameters'])) \
 @foreach($parsedRoute['parameters'] as $attribute => $parameter)
     -d "{{$attribute}}"="{{$parameter['value']}}" \
 @endforeach
 @endif
 
+```
+
+```php
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "{{config('app.url')}}/{{$parsedRoute['uri']}}",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+@if($parsedRoute['methods'][0] == 'POST')
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => "",
+@endif
+  CURLOPT_CUSTOMREQUEST => "{{$parsedRoute['methods'][0]}}",
+  CURLOPT_HTTPHEADER => array(
+    "cache-control: no-cache"
+  ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
+}
+```
+
+```python
+import requests
+
+url = "{{config('app.url')}}/{{$parsedRoute['uri']}}"
+
+headers = {
+    'cache-control': "no-cache"
+    }
+
+response = requests.request("{{$parsedRoute['methods'][0]}}", url, headers=headers)
+
+print(response.text)
+```
+
+```golang
+package main
+
+import (
+	"fmt"
+	"strings"
+	"net/http"
+	"io/ioutil"
+)
+
+func main() {
+
+	url := "{{config('app.url')}}/{{$parsedRoute['uri']}}"
+
+@if($parsedRoute['methods'][0] == 'POST')
+	payload := strings.NewReader("------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data;------WebKitFormBoundary7MA4YWxkTrZu0gW--")
+	req, _ := http.NewRequest("{{$parsedRoute['methods'][0]}}", url, payload)
+	req.Header.Add("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
+@else
+	req, _ := http.NewRequest("{{$parsedRoute['methods'][0]}}", url, nil)
+@endif
+
+	req.Header.Add("cache-control", "no-cache")
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(res)
+	fmt.Println(string(body))
+
+}
 ```
 
 ```javascript
